@@ -1,8 +1,11 @@
 import { IoShirtOutline } from "react-icons/io5";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
+import { AxiosInstance } from "../routes/axiosInstance";
+import { useEffect, useState } from "react";
 
 const Home = () => {
+  const [allProducts, setAllProducts] = useState([]);
   const categories = [
     {
       id: "men",
@@ -63,8 +66,7 @@ const Home = () => {
     {
       image: "https://example.com/products/shirt.jpg",
       title: "cotton casual shirt",
-      description:
-        "comfortable and breathable cotton casual shirt for daily wear",
+      description: "comfortable and breathable cotton casual shirt for daily wear",
       category: "clothing",
       brand: "united colors",
       price: 999,
@@ -75,8 +77,7 @@ const Home = () => {
     {
       image: "https://example.com/products/laptop.jpg",
       title: "hp pavilion laptop",
-      description:
-        "powerful hp laptop with i5 processor and 8GB RAM for multitasking",
+      description: "powerful hp laptop with i5 processor and 8GB RAM for multitasking",
       category: "electronics",
       brand: "hp",
       price: 58999,
@@ -87,8 +88,7 @@ const Home = () => {
     {
       image: "https://example.com/products/smartphone.jpg",
       title: "samsung galaxy s21",
-      description:
-        "android smartphone with dynamic AMOLED display and high-end camera",
+      description: "android smartphone with dynamic AMOLED display and high-end camera",
       category: "mobiles",
       brand: "samsung",
       price: 69999,
@@ -99,8 +99,7 @@ const Home = () => {
     {
       image: "https://example.com/products/shoes.jpg",
       title: "nike running shoes",
-      description:
-        "lightweight running shoes for men with extra grip and durability",
+      description: "lightweight running shoes for men with extra grip and durability",
       category: "footwear",
       brand: "nike",
       price: 4999,
@@ -111,8 +110,7 @@ const Home = () => {
     {
       image: "https://example.com/products/watch.jpg",
       title: "fossil analog watch",
-      description:
-        "premium analog wristwatch with leather strap and metal case",
+      description: "premium analog wristwatch with leather strap and metal case",
       category: "accessories",
       brand: "fossil",
       price: 10999,
@@ -156,8 +154,7 @@ const Home = () => {
     {
       image: "https://example.com/products/earbuds.jpg",
       title: "boat airdopes 441",
-      description:
-        "wireless bluetooth earbuds with immersive sound and long battery",
+      description: "wireless bluetooth earbuds with immersive sound and long battery",
       category: "audio",
       brand: "boat",
       price: 2999,
@@ -178,41 +175,43 @@ const Home = () => {
     },
   ];
 
+  async function fetchProducts() {
+    try {
+      const response = await AxiosInstance.get("/shop/product/get");
+      console.log(response);
+      if (response.data.success) {
+        // Handle successful response
+        setAllProducts(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  function addToCart() {
+    // This function will handle adding products to the cart
+    console.log("Adding to cart:");
+  }
+
   const items = [
     <div className="item h-[70vh]" data-value="1">
-      <img
-        src="/assets/image.png"
-        alt=""
-        className="h-full w-full object-center object-cover"
-      />
+      <img src="/assets/image.png" alt="" className="h-full w-full object-center object-cover" />
     </div>,
     <div className="item h-[70vh]" data-value="2">
-      <img
-        src="/assets/image2.jpg"
-        alt=""
-        className="h-full w-full object-center object-cover"
-      />
+      <img src="/assets/image2.jpg" alt="" className="h-full w-full object-center object-cover" />
     </div>,
     <div className="item h-[70vh]" data-value="3">
-      <img
-        src="/assets/image3.jpg"
-        alt=""
-        className="h-full w-full object-center object-cover"
-      />
+      <img src="/assets/image3.jpg" alt="" className="h-full w-full object-center object-cover" />
     </div>,
     <div className="item h-[70vh]" data-value="4">
-      <img
-        src="/assets/image4.avif"
-        alt=""
-        className="h-full w-full object-center object-cover"
-      />
+      <img src="/assets/image4.avif" alt="" className="h-full w-full object-center object-cover" />
     </div>,
     <div className="item h-[70vh]" data-value="5">
-      <img
-        src="/assets/image5.jpeg"
-        alt=""
-        className="h-full w-full object-center object-cover"
-      />
+      <img src="/assets/image5.jpeg" alt="" className="h-full w-full object-center object-cover" />
     </div>,
   ];
 
@@ -234,9 +233,7 @@ const Home = () => {
       </header>
       <section className="py-6 md:py-10">
         <header className="p-4 md:p-10">
-          <h1 className="font-extrabold text-center text-2xl md:text-3xl">
-            Shop by Category
-          </h1>
+          <h1 className="font-extrabold text-center text-2xl md:text-3xl">Shop by Category</h1>
         </header>
         <article className="flex flex-wrap gap-4 justify-center md:justify-evenly">
           {categories.map((category) => (
@@ -244,19 +241,13 @@ const Home = () => {
               key={category.id}
               className="py-3 px-6 md:px-12 rounded-lg bg-white shadow-xl border border-gray-200 flex flex-col items-center w-32 md:w-auto mb-4"
             >
-              <figure className="text-4xl md:text-6xl p-2 md:p-3">
-                {category.icon}
-              </figure>
-              <h3 className="font-bold text-center pt-2 text-base md:text-lg">
-                {category.title}
-              </h3>
+              <figure className="text-4xl md:text-6xl p-2 md:p-3">{category.icon}</figure>
+              <h3 className="font-bold text-center pt-2 text-base md:text-lg">{category.title}</h3>
             </div>
           ))}
         </article>
         <header className="pt-10 pb-4 md:pt-30 md:pb-10">
-          <h1 className="font-extrabold text-center text-2xl md:text-3xl">
-            Shop by Brands
-          </h1>
+          <h1 className="font-extrabold text-center text-2xl md:text-3xl">Shop by Brands</h1>
         </header>
         <article className="flex flex-wrap gap-4 justify-center md:justify-evenly">
           {brands.map((brand) => (
@@ -264,22 +255,16 @@ const Home = () => {
               key={brand.id}
               className="py-3 px-6 md:px-12 rounded-lg bg-white shadow-xl border border-gray-200 flex flex-col items-center w-32 md:w-auto mb-4"
             >
-              <figure className="text-4xl md:text-6xl p-2 md:p-3">
-                {brand.icon}
-              </figure>
-              <h3 className="font-bold text-center pt-2 text-base md:text-lg">
-                {brand.brandName}
-              </h3>
+              <figure className="text-4xl md:text-6xl p-2 md:p-3">{brand.icon}</figure>
+              <h3 className="font-bold text-center pt-2 text-base md:text-lg">{brand.brandName}</h3>
             </div>
           ))}
         </article>
         <header className="pt-10 pb-4 md:pt-30 md:pb-10">
-          <h1 className="font-extrabold text-center text-2xl md:text-3xl">
-            Featured Products
-          </h1>
+          <h1 className="font-extrabold text-center text-2xl md:text-3xl">Featured Products</h1>
         </header>
         <article className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-          {sampleProducts.map((product, idx) => (
+          {allProducts.map((product, idx) => (
             <section key={idx} className="p-2 md:p-4 w-full flex justify-center">
               <div className="shadow-lg rounded-lg overflow-hidden w-full max-w-xs">
                 <img
@@ -290,9 +275,7 @@ const Home = () => {
                   className="h-48 md:h-64 w-full object-cover object-top block mx-auto"
                 />
                 <div className="p-3 md:p-4">
-                  <h1 className="capitalize font-extrabold text-lg md:text-xl">
-                    {product.title}
-                  </h1>
+                  <h1 className="capitalize font-extrabold text-lg md:text-xl">{product.title}</h1>
                   <p className="flex justify-between text-xs md:text-sm capitalize text-gray-600 font-semibold">
                     <span>{product.category}</span>
                     <span>{product.brand}</span>
@@ -301,7 +284,10 @@ const Home = () => {
                     <del>Rs.{product.price}</del>
                     <span>Rs.{product.salePrice}</span>
                   </h3>
-                  <button className="bg-black text-white w-full rounded py-1 mt-3 cursor-pointer text-sm md:text-base">
+                  <button
+                    onClick={() => addToCart()}
+                    className="bg-black text-white w-full rounded py-1 mt-3 cursor-pointer text-sm md:text-base"
+                  >
                     Add to cart
                   </button>
                 </div>

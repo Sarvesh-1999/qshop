@@ -1,13 +1,27 @@
 import { IoCart } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import Avatar from "@mui/material/Avatar";
 import CartDrawer from "./CartDrawer";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AxiosInstance } from "../routes/axiosInstance";
+import { AuthGlobalContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [menuToggle, setMenuToggled] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const { loggedInUser, setLoggedInUser, checkLoggedInUser } = useContext(AuthGlobalContext);
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    checkLoggedInUser(); // on mount
+  }, []);
+
+  const handleLogout = async () => {
+    await AxiosInstance.post("/user/logout");
+    setLoggedInUser(false);
+    navigate("/login");
+  };
 
   const toggleMenu = () => {
     setMenuToggled(!menuToggle);
@@ -15,9 +29,6 @@ const Navbar = () => {
   const toggleMobileMenu = () => {
     setMobileMenu(!mobileMenu);
   };
-
-  let accesstoken = localStorage.getItem("accesstoken");
-  let navigate = useNavigate();
 
   const categories = [
     { id: "home", title: "Home", path: "/home" },
@@ -30,11 +41,12 @@ const Navbar = () => {
     { id: "search", title: "Search" },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("accesstoken");
-    toast.success("logged out");
-    navigate("/login");
-  };
+  // const handleLogout = async () => {
+  //   await AxiosInstance.post("/user/logout");
+  //   setAccessToken(false);
+  //   toast.success("logged out");
+  //   navigate("/login");
+  // };
 
   function stringAvatar(name) {
     return {
@@ -44,9 +56,7 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 h-[70px] w-full bg-white flex items-center justify-between px-4 md:px-8 shadow z-50">
-      <div className="font-extrabold text-2xl md:text-3xl text-black select-none">
-        MyApp
-      </div>
+      <div className="font-extrabold text-2xl md:text-3xl text-black select-none">MyApp</div>
       {/* Hamburger for mobile */}
       <div className="md:hidden flex items-center">
         <button onClick={toggleMobileMenu} className="focus:outline-none">
@@ -67,7 +77,7 @@ const Navbar = () => {
         </button>
       </div>
       {/* Desktop menu */}
-      {accesstoken ? (
+      {loggedInUser ? (
         <section className="hidden md:flex gap-2">
           {categories.map((ele) => (
             <Link to={ele.path ? ele.path : "/home"} key={ele.id}>
@@ -79,16 +89,13 @@ const Navbar = () => {
         </section>
       ) : null}
       <aside className="hidden md:flex gap-4 font-semibold items-center">
-        {accesstoken ? (
+        {loggedInUser ? (
           <>
-            <button>
+            <div>
               <CartDrawer />
-            </button>
+            </div>
             <div className="relative" onClick={toggleMenu}>
-              <Avatar
-                sx={{ bgcolor: "black" }}
-                {...stringAvatar("Rohit Sharma")}
-              />
+              <Avatar sx={{ bgcolor: "black" }} {...stringAvatar("Rohit Sharma")} />
               {menuToggle ? (
                 <div className="absolute min-w-40 p-2 right-0 bg-white rounded shadow-lg top-12 z-50 border border-gray-200">
                   <ul className="flex flex-col gap-2">
@@ -128,7 +135,7 @@ const Navbar = () => {
             className="absolute top-0 right-0 w-3/4 max-w-xs h-full bg-white shadow-lg p-6 flex flex-col gap-6"
             onClick={(e) => e.stopPropagation()}
           >
-            {accesstoken ? (
+            {loggedInUser ? (
               <>
                 <section className="flex flex-col gap-2">
                   {categories.map((ele) => (
